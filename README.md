@@ -58,6 +58,7 @@ Create a `.env` file in the project root. It is gitignored and loaded automatica
 | `LANGSMITH_WORKSPACE_ID` | If key spans multiple workspaces | **Your** workspace ID, so datasets/experiments resolve to the right workspace. |
 | `LANGSMITH_ENDPOINT` | Only if non-default | Set to your region/self-hosted URL (e.g. `https://eu.api.smith.langchain.com`). Omit for default US. |
 | `LANGSMITH_TRACING` | No | Defaults to `true` (set by `gtm_agent.py`). Set `false` to disable tracing. |
+| `LANGSMITH_REVISION_ID` | No | Identifies the deploying checkout in trace metadata. Defaults to its short git HEAD SHA when unset; set explicitly for deployments without git metadata. |
 | Model provider access | Only to run the agent locally | Needed by `run.py` / `eval.py`, which call a chat model (`MODEL_NAME` in `gtm_agent/gtm_agent.py`). Configure whatever credentials your model routing (direct provider key or LangSmith gateway) requires. **Not needed if you generate traces with `upload_traces.py`.** |
 
 \* `DATASET_NAME` is required to run `eval.py` (see below).

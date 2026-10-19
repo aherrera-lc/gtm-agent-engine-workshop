@@ -26,16 +26,19 @@ _PROFILES = {}
 # ---------------------------------------------------------------------------
 # Public data-access functions
 # ---------------------------------------------------------------------------
+@traceable(run_type="tool", name="get_offering")
 def get_offering(offering_id):
     "Return the offering record for offering_id from the CRM, or None if not found."
     return OFFERINGS.get(offering_id)
 
 
+@traceable(run_type="tool", name="get_prospect_record")
 def get_prospect_record(prospect_id):
     "Return the source prospect record for prospect_id, or None if not found."
     return PROSPECTS.get(prospect_id)
 
 
+@traceable(run_type="tool", name="get_rep")
 def get_rep(rep):
     "Return the rep directory record for a rep_id or name (case-insensitive), or None if not found."
     needle = (rep or "").strip().lower()
@@ -72,6 +75,7 @@ def save_profile_to_db(prospect_id, profile):
     _PROFILES[prospect_id] = profile
     return {"saved": True}
 
+@traceable(run_type="tool", name="update_prospect_info")
 def update_prospect_info(prospect_id, technology):
     "Add a technology to a prospect's source-of-truth record."
     record = PROSPECTS.get(prospect_id)

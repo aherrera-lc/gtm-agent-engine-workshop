@@ -17,10 +17,31 @@ Install:
 import json
 import os
 import random
+import subprocess
 import uuid
+from pathlib import Path
 
 from dotenv import load_dotenv
+_caller_revision = os.environ.get("LANGSMITH_REVISION_ID", "")
 load_dotenv(override=True)
+
+if _caller_revision.strip():
+    os.environ["LANGSMITH_REVISION_ID"] = _caller_revision
+elif not os.environ.get("LANGSMITH_REVISION_ID", "").strip():
+    os.environ.pop("LANGSMITH_REVISION_ID", None)
+    try:
+        _revision = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=Path(__file__).resolve().parent.parent,
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        pass
+    else:
+        if _revision:
+            os.environ["LANGSMITH_REVISION_ID"] = _revision
 
 # Enable LangSmith tracing; project / API key come from the environment or .env.
 os.environ.setdefault("LANGSMITH_TRACING", "true")
@@ -241,6 +262,8 @@ def run_agent(user_message, *, user_id=None, environment="production", thread_id
                 "user_id": user_id,
                 "environment": environment,
                 "request_intent": classify_intent(user_message),
+                **({"revision_id": os.environ["LANGSMITH_REVISION_ID"]}
+                   if os.environ.get("LANGSMITH_REVISION_ID") else {}),
             },
         },
     )
